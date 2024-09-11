@@ -1,0 +1,68 @@
+server:
+  port: ${api.port.gateway}
+  error:
+    include-message: always
+    include-binding-errors: always
+
+spring:
+  config:
+    import: configserver:http://localhost:9999
+  cloud:
+    gateway:
+      routes:
+        - id: user-route
+          uri: ${services.user.uri}
+          predicates:
+            - Path=/users/**
+          filters:
+            - PrefixPath=/api/${api.version}
+
+        - id: user-management-route
+          uri: ${services.user.uri}
+          predicates:
+            - Path=/management/users/**
+          filters:
+            - PrefixPath=/api/${api.version}
+
+        - id: order-route
+          uri: ${services.order.uri}
+          predicates:
+            - Path=/orders/**
+          filters:
+            - PrefixPath=/api/${api.version}
+            - AuthFilter
+
+        - id: order-management-route
+          uri: ${services.order.uri}
+          predicates:
+            - Path=/management/orders/**
+          filters:
+            - PrefixPath=/api/${api.version}
+            - AuthFilter
+
+        - id: product-route
+          uri: ${services.product.uri}
+          predicates:
+            - Path=/products/**
+          filters:
+            - PrefixPath=/api/${api.version}
+            - AuthFilter
+
+        - id: product-management-route
+          uri: ${services.product.uri}
+          predicates:
+            - Path=/management/products/**
+          filters:
+            - PrefixPath=/api/${api.version}
+            - AuthFilter
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  endpoint:
+    healths:
+      show-details: always
+    gateway:
+      enabled: true
