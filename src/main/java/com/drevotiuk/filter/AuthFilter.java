@@ -73,10 +73,10 @@ public class AuthFilter extends AbstractGatewayFilterFactory<AuthFilter.Config> 
   public GatewayFilter apply(Config config) {
     log.info("Authorizing request");
     return (exchange, chain) -> {
-      if (!routeValidator.isSecured.test(exchange.getRequest()))
+      ServerHttpRequest request = exchange.getRequest();
+      if (!routeValidator.isSecured.test(request))
         return chain.filter(exchange); // Allow unsecured routes
 
-      ServerHttpRequest request = exchange.getRequest();
       HttpHeaders headers = new HttpHeaders();
       headers.addAll(request.getHeaders());
 
