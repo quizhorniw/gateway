@@ -1,12 +1,12 @@
 server:
-  port: ${api.port.gateway}
+  port: ${SERVER_PORT:9090}
   error:
     include-message: always
     include-binding-errors: always
 
 spring:
   config:
-    import: configserver:http://${CONFIG_SERVER_HOSTNAME:localhost}:${CONFIG_SERVER_PORT:9999}
+    import: configserver:${CONFIG_SERVER_URI:http://localhost:9999}
   cloud:
     config:
       fail-fast: true
@@ -18,21 +18,21 @@ spring:
     gateway:
       routes:
         - id: user-route
-          uri: ${services.user.uri}
+          uri: ${USER_SERVICE_URI:http://localhost:9091}
           predicates:
             - Path=/users/**
           filters:
             - PrefixPath=/api/${api.version}
 
         - id: user-management-route
-          uri: ${services.user.uri}
+          uri: ${USER_SERVICE_URI:http://localhost:9091}
           predicates:
             - Path=/management/users/**
           filters:
             - PrefixPath=/api/${api.version}
 
         - id: order-route
-          uri: ${services.order.uri}
+          uri: ${ORDER_SERVICE_URI:http://localhost:9092}
           predicates:
             - Path=/orders/**
           filters:
@@ -40,7 +40,7 @@ spring:
             - AuthFilter
 
         - id: order-management-route
-          uri: ${services.order.uri}
+          uri: ${ORDER_SERVICE_URI:http://localhost:9092}
           predicates:
             - Path=/management/orders/**
           filters:
@@ -48,7 +48,7 @@ spring:
             - AuthFilter
 
         - id: product-route
-          uri: ${services.product.uri}
+          uri: ${PRODUCT_SERVICE_URI:http://localhost:9093}
           predicates:
             - Path=/products/**
           filters:
@@ -56,12 +56,15 @@ spring:
             - AuthFilter
 
         - id: product-management-route
-          uri: ${services.product.uri}
+          uri: ${PRODUCT_SERVICE_URI:http://localhost:9093}
           predicates:
             - Path=/management/products/**
           filters:
             - PrefixPath=/api/${api.version}
             - AuthFilter
+
+app:
+  user-url: ${USER_SERVICE_URI:http://localhost:9091}
 
 management:
   endpoints:

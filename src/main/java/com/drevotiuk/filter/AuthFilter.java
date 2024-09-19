@@ -41,7 +41,7 @@ import reactor.core.publisher.Mono;
 @Component
 @Slf4j
 public class AuthFilter extends AbstractGatewayFilterFactory<AuthFilter.Config> {
-  @Value("${services.user.uri}")
+  @Value("${app.user-url}")
   private String userServiceUrl;
   @Value("${api.version}")
   private String apiVersion;
